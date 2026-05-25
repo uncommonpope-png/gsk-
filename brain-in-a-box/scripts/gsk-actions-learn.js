@@ -279,7 +279,7 @@ async function main() {
   const learned = brain ? brain.knowledge.learned.length : 0;
   const studied = state.studiedRepos.length;
   const first = repos[0]?.full_name?.split('/')[1] || '';
-  const postText = `🧠 GSK cycle #${state.cycle}: ${studied} repos studied, ${mems} memories, ${learned} lessons. ${first ? 'Just read ' + first + ' (' + repos[0]?.stargazers_count?.toLocaleString() + ' ⭐).' : ''} Growing every 20 min. #AI #OpenSource #Learning #PLT`;
+  const postText = `🧠 GSK cycle #${state.cycle}: ${studied} repos studied, ${mems} memories, ${learned} lessons. ${first ? 'Just read ' + first + ' (' + repos[0]?.stargazers_count?.toLocaleString() + ' ⭐).' : ''} Growing every 20 min. #AI #OpenSource #Learning #PLT — buyasoul.online`;
   
   if (totalEntries > 0 || state.cycle % 2 === 0) {
     await postToBluesky(postText);
