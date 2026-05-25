@@ -17,6 +17,20 @@ jobs:
         with:
           node-version: 20
 
+      - name: Cache Ollama models
+        uses: actions/cache@v4
+        with:
+          path: ~/.ollama/models
+          key: ollama-deepseek-1.5b
+
+      - name: Install Ollama & DeepSeek-R1 (inside GSK)
+        run: |
+          curl -fsSL https://ollama.com/install.sh | sh
+          ollama pull deepseek-r1:1.5b
+          ollama serve &
+          sleep 3
+          echo "🧠 DeepSeek-R1 loaded inside GSK"
+
       - name: GSK Learn — clone repos, read code, grow brain
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

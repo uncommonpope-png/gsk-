@@ -26,6 +26,14 @@ function fetchJSON(url, options = {}) {
 
 const FREE_ENDPOINTS = [
     {
+        name: 'DeepSeek-R1 (Ollama)',
+        url: 'http://127.0.0.1:11434/api/chat',
+        model: 'deepseek-r1:1.5b',
+        headers: {},
+        authKey: null,
+        ollama: true
+    },
+    {
         name: 'OpenRouter Free',
         url: 'https://openrouter.ai/api/v1/chat/completions',
         model: 'google/gemini-2.0-flash-exp:free',
