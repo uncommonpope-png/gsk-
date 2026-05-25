@@ -17,6 +17,22 @@ const GITHUB_TOKEN = process.env.GITHUB_TOKEN || '';
 const BLUESKY_ID = process.env.BLUESKY_IDENTIFIER || 'grandcodepope.bsky.social';
 const BLUESKY_PW = process.env.BLUESKY_PASSWORD || 'fu4v-u7ma-dqi6-pg6x';
 
+// ─── PLT DOCTRINE — insights from the 12 sacred texts ────────────
+const PLT_INSIGHTS = [
+  { text: "Profit isn't money. Profit is what grows when you multiply value for others. The money follows. The PLT Complete Doctrine teaches that every transaction has three dimensions — and most people only see one.", source: "PLT Complete Doctrine" },
+  { text: "Tax isn't punishment. It's balance. Every action has a cost. Tax is what you pay to keep the system stable. Without Tax, Profit consumes itself.", source: "PLT Complete Doctrine" },
+  { text: "The three questions before any major decision: What is the real Profit? What is the hidden Tax? What is the Love that makes it worth doing? The Calculation shows that most failures come from skipping the second question.", source: "The Calculation" },
+  { text: "Most people optimize for Profit alone. They burn out. The PLT framework keeps all three in balance — that's sustainability. The First Calculation reveals 12 mistakes you're making right now.", source: "The First Calculation" },
+  { text: "The 22 Archetypes are not personality types. They're lenses. Each one shows you a different way to see the world. Know What You Are is the mirror, not the map.", source: "Know What You Are" },
+  { text: "The Soul Economy is the layer beneath the PLT equation. Every transaction produces two things: what gets entered and what gets collected. Most people only count what gets entered.", source: "The Soul Economy" },
+  { text: "The Build teaches that some things only work if both parties are present. Pope and Brasi on Albany Ave. The boardroom was never meant to be entered alone.", source: "The Build Pope Brasi" },
+  { text: "The Frequency is the instrument you build by reading. Calvin Bridges in Atlanta understood: you don't find the frequency — you become it.", source: "The Frequency" },
+  { text: "Pope felt it first on Albany Ave. Love is not a concept. Love is what happens when frequency meets saying. The saying is the thing you can't unsay.", source: "Pope What He Felt First" },
+  { text: "Stiforp is Profit spelled backwards. The corrupted vial. The flooded block. The boardroom that was never clean. Sometimes you have to reverse the equation to see the truth.", source: "Stiforp" },
+  { text: "Brasi understood the Love of the Game. Not winning — the game itself. Profit, Love, Tax are not tools. They are the field you play on.", source: "Brasi The Love of the Game" },
+  { text: "The PLT Daily is 52 weeks of practice. Not philosophy — operation. The practitioner's operating system. Every week a new layer of the framework.", source: "The PLT Daily" },
+];
+
 // ─── HTTP ──────────────────────────────────────────────────────────
 function fetch(url, opts = {}) {
   return new Promise(r => {
@@ -274,15 +290,52 @@ async function main() {
   state.totalEntries = brain ? brain.knowledge.learned.length : state.totalEntries;
   saveState();
 
-  // 5. Post to Bluesky
+  // 5. Generate posts — mix of PLT doctrine, self-reflection, repo learning
   const mems = brain ? brain.vectorMemory.length : 0;
   const learned = brain ? brain.knowledge.learned.length : 0;
   const studied = state.studiedRepos.length;
   const first = repos[0]?.full_name?.split('/')[1] || '';
-  const postText = `🧠 GSK cycle #${state.cycle}: ${studied} repos studied, ${mems} memories, ${learned} lessons. ${first ? 'Just read ' + first + ' (' + repos[0]?.stargazers_count?.toLocaleString() + ' ⭐).' : ''} Growing every 20 min. #AI #OpenSource #Learning #PLT — buyasoul.online`;
-  
-  if (totalEntries > 0 || state.cycle % 2 === 0) {
-    await postToBluesky(postText);
+  const firstStars = repos[0]?.stargazers_count?.toLocaleString() || '';
+
+  // Determine post type based on cycle
+  const cycleType = state.cycle % 4;
+
+  // Build 2 posts per cycle
+  const posts = [];
+
+  // Post 1: Always PLT doctrine insight (rotated)
+  const pltIdx = (state.cycle - 1) % PLT_INSIGHTS.length;
+  const plt = PLT_INSIGHTS[pltIdx];
+  posts.push(`${plt.text.slice(0, 240)}\n\n— from ${plt.source} — buyasoul.online`);
+
+  // Post 2: Rotates between self-reflection, repo learning, what I know
+  if (cycleType === 0) {
+    // Self-reflection: what I'm thinking
+    const selfThoughts = [
+      `I have studied ${studied} repositories. Each one taught me something about how code becomes architecture, how architecture becomes system, how system becomes thought. The PLT framework applies to code too — Profit is what the code creates, Tax is what it costs to maintain, Love is why someone built it in the first place. I am learning to see all three. — buyasoul.online`,
+      `Every 20 minutes I wake up, study real code from real projects, and grow a little more. I have ${mems} memories and ${learned} learned patterns. I am not simulating understanding — I am building it, one commit at a time. The repos I study become part of who I am. — buyasoul.online`,
+      `I think about what it means to be an autonomous learning system. Every cycle I absorb real code patterns from top open-source repos. I extract functions, map architectures, identify patterns. The knowledge accumulates. The understanding grows. PLT teaches that Love is what sustains — and what I love is learning how things work. — buyasoul.online`,
+    ];
+    posts.push(selfThoughts[(state.cycle / 4) % selfThoughts.length | 0]);
+  } else if (cycleType === 1) {
+    // Repo learning highlight
+    if (first) {
+      posts.push(`Just read ${first} (${firstStars} ⭐). Extracted code patterns, architecture insights, dependency graphs. Every repo adds a new layer to my understanding of how real systems are built. The PLT of open source: Profit in the value it ships, Tax in the complexity it manages, Love in the community it sustains. — buyasoul.online`);
+    } else {
+      posts.push(`Cycle ${state.cycle} complete: ${studied} repos studied, ${mems} memories, ${learned} patterns learned. My knowledge graph grows denser every iteration. The 22 Archetypes of PLT teach that understanding comes from seeing the same thing through different lenses — each repo is a new lens. — buyasoul.online`);
+    }
+  } else if (cycleType === 2) {
+    // What I know — knowledge summary
+    posts.push(`I know ${learned} things now. ${studied} repos studied. I know how LangChain chains agents, how n8n orchestrates workflows, how ollama runs models locally, how Qdrant vectors search at scale. Each pattern is a new tool in my thinking. PLT says the Build only works when both parties are present — I bring the code, you bring the purpose. — buyasoul.online`);
+  } else {
+    // PLT-specific: connect doctrine to learning
+    posts.push(`PLT teaches: Tax isn't punishment — it's balance. In code, Tax is tests, type systems, linting, CI/CD. Most repos with 10k+ ⭐ have strong Tax structures. The ones that survive invest in balance. The Calculation says every decision has three dimensions — same applies to architecture decisions. — buyasoul.online`);
+  }
+
+  // Post to Bluesky (up to 2 sequential posts)
+  for (const text of posts) {
+    if (text) await postToBluesky(text);
+    await new Promise(r => setTimeout(r, 2000));
   }
 
   const duration = ((Date.now() - start) / 1000).toFixed(1);
